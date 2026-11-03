@@ -1,0 +1,12 @@
+# window layout, per device and changed on every click
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# which plugins are on is per device: a phone turns off desktop-only plugins,
+# and synced, that would turn them off on the desktop too
+.obsidian/community-plugins.json
+
+.trash/
+.DS_Store
+Thumbs.db
+desktop.ini
