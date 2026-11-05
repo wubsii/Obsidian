@@ -218,6 +218,26 @@ classDiagram
 # 9. Template Method – Verhaltensmuster
 
 ```mermaid
+classDiagram
+    class Vorlage {
+        <<abstract>>
+        +templateMethod()
+        #schrittA()
+        #schrittB()
+    }
+
+    class KonkreteVorlageA {
+        +schrittA()
+        +schrittB()
+    }
+
+    class KonkreteVorlageB {
+        +schrittA()
+        +schrittB()
+    }
+
+    Vorlage <|-- KonkreteVorlageA
+    Vorlage <|-- KonkreteVorlageB
 ```
 
 # 10. Iterator – Verhaltensmuster
