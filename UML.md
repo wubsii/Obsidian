@@ -160,6 +160,30 @@ classDiagram
 # 7. Strategy – Verhaltensmuster
 
 ```mermaid
+
+classDiagram
+    class Strategie {
+        <<interface>>
+        +berechnen()
+    }
+
+    class StrategieA {
+        +berechnen()
+    }
+
+    class StrategieB {
+        +berechnen()
+    }
+
+    class Kontext {
+        -strategie Strategie
+        +strategieSetzen(Strategie)
+        +ausfuehren()
+    }
+
+    Strategie <|.. StrategieA
+    Strategie <|.. StrategieB
+    Kontext --> Strategie : verwendet
 ```
 
 # 8. Command – Verhaltensmuster
