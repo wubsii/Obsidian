@@ -271,7 +271,9 @@ classDiagram
     Sammlung <|.. KonkreteSammlung
     KonkreteSammlung --> KonkreterIterator : erstellt
     KonkreterIterator --> KonkreteSammlung : durchläuft
-    ``
+
+```
+
 
 ## Übersicht zum Lernen
 
