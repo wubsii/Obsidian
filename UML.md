@@ -13,7 +13,41 @@ classDiagram
 
 # 2. Factory Method – Erzeugungsmuster
 
-#chatgpt-mermaid-_r_f3_{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;fill:rgb(237, 237, 237);}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#chatgpt-mermaid-_r_f3_ .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-_r_f3_ .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-_r_f3_ .error-icon{fill:rgb(48, 48, 48);}#chatgpt-mermaid-_r_f3_ .error-text{fill:rgb(237, 237, 237);stroke:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .edge-thickness-normal{stroke-width:1px;}#chatgpt-mermaid-_r_f3_ .edge-thickness-thick{stroke-width:3.5px;}#chatgpt-mermaid-_r_f3_ .edge-pattern-solid{stroke-dasharray:0;}#chatgpt-mermaid-_r_f3_ .edge-thickness-invisible{stroke-width:0;fill:none;}#chatgpt-mermaid-_r_f3_ .edge-pattern-dashed{stroke-dasharray:3;}#chatgpt-mermaid-_r_f3_ .edge-pattern-dotted{stroke-dasharray:2;}#chatgpt-mermaid-_r_f3_ .marker{fill:rgb(175, 175, 175);stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_f3_ .marker.cross{stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_f3_ svg{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;}#chatgpt-mermaid-_r_f3_ p{margin:0;}#chatgpt-mermaid-_r_f3_ g.classGroup text{fill:rgb(31, 78, 148);stroke:none;font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:10px;}#chatgpt-mermaid-_r_f3_ g.classGroup text .title{font-weight:bolder;}#chatgpt-mermaid-_r_f3_ .cluster-label text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .cluster-label span{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .cluster-label span p{background-color:transparent;}#chatgpt-mermaid-_r_f3_ .cluster rect{fill:rgb(48, 48, 48);stroke:rgba(255, 255, 255, 0.15);stroke-width:1px;}#chatgpt-mermaid-_r_f3_ .cluster text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .cluster span{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .nodeLabel,#chatgpt-mermaid-_r_f3_ .edgeLabel{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .noteLabel .nodeLabel,#chatgpt-mermaid-_r_f3_ .noteLabel .edgeLabel{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .edgeLabel .label rect{fill:rgb(9, 23, 44);}#chatgpt-mermaid-_r_f3_ .label text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .labelBkg{background:rgb(9, 23, 44);}#chatgpt-mermaid-_r_f3_ .edgeLabel .label span{background:rgb(9, 23, 44);}#chatgpt-mermaid-_r_f3_ .classTitle{font-weight:bolder;}#chatgpt-mermaid-_r_f3_ .node rect,#chatgpt-mermaid-_r_f3_ .node circle,#chatgpt-mermaid-_r_f3_ .node ellipse,#chatgpt-mermaid-_r_f3_ .node polygon,#chatgpt-mermaid-_r_f3_ .node path{fill:rgb(9, 23, 44);stroke:rgb(31, 78, 148);stroke-width:1;}#chatgpt-mermaid-_r_f3_ .divider{stroke:rgb(31, 78, 148);stroke-width:1;}#chatgpt-mermaid-_r_f3_ g.clickable{cursor:pointer;}#chatgpt-mermaid-_r_f3_ g.classGroup rect{fill:rgb(9, 23, 44);stroke:rgb(31, 78, 148);}#chatgpt-mermaid-_r_f3_ g.classGroup line{stroke:rgb(31, 78, 148);stroke-width:1;}#chatgpt-mermaid-_r_f3_ .classLabel .box{stroke:none;stroke-width:0;fill:rgb(9, 23, 44);opacity:0.5;}#chatgpt-mermaid-_r_f3_ .classLabel .label{fill:rgb(31, 78, 148);font-size:10px;}#chatgpt-mermaid-_r_f3_ .relation{stroke:rgb(175, 175, 175);stroke-width:1;fill:none;}#chatgpt-mermaid-_r_f3_ .dashed-line{stroke-dasharray:3;}#chatgpt-mermaid-_r_f3_ .dotted-line{stroke-dasharray:1 2;}#chatgpt-mermaid-_r_f3_ [id$="-compositionStart"],#chatgpt-mermaid-_r_f3_ .composition{fill:rgb(175, 175, 175)!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-compositionEnd"],#chatgpt-mermaid-_r_f3_ .composition{fill:rgb(175, 175, 175)!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-dependencyStart"],#chatgpt-mermaid-_r_f3_ .dependency{fill:rgb(175, 175, 175)!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-dependencyEnd"],#chatgpt-mermaid-_r_f3_ .dependency{fill:rgb(175, 175, 175)!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-extensionStart"],#chatgpt-mermaid-_r_f3_ .extension{fill:transparent!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-extensionEnd"],#chatgpt-mermaid-_r_f3_ .extension{fill:transparent!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-aggregationStart"],#chatgpt-mermaid-_r_f3_ .aggregation{fill:transparent!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-aggregationEnd"],#chatgpt-mermaid-_r_f3_ .aggregation{fill:transparent!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-lollipopStart"],#chatgpt-mermaid-_r_f3_ .lollipop{fill:rgb(9, 23, 44)!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ [id$="-lollipopEnd"],#chatgpt-mermaid-_r_f3_ .lollipop{fill:rgb(9, 23, 44)!important;stroke:rgb(175, 175, 175)!important;stroke-width:1;}#chatgpt-mermaid-_r_f3_ .edgeTerminals{font-size:11px;line-height:initial;}#chatgpt-mermaid-_r_f3_ .classTitleText{text-anchor:middle;font-size:18px;fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_f3_ .edgeLabel[data-look="neo"]{background-color:rgb(0, 0, 0);text-align:center;}#chatgpt-mermaid-_r_f3_ .edgeLabel[data-look="neo"] p{background-color:rgb(0, 0, 0);}#chatgpt-mermaid-_r_f3_ .edgeLabel[data-look="neo"] rect{opacity:0.5;background-color:rgb(0, 0, 0);fill:rgb(0, 0, 0);}#chatgpt-mermaid-_r_f3_ .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#chatgpt-mermaid-_r_f3_ .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#chatgpt-mermaid-_r_f3_ .node .neo-node{stroke:rgb(31, 78, 148);}#chatgpt-mermaid-_r_f3_ [data-look="neo"].node rect,#chatgpt-mermaid-_r_f3_ [data-look="neo"].cluster rect,#chatgpt-mermaid-_r_f3_ [data-look="neo"].node polygon{stroke:url(#chatgpt-mermaid-_r_f3_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_f3_ [data-look="neo"].swimlane.cluster rect{filter:none;}#chatgpt-mermaid-_r_f3_ [data-look="neo"].node path{stroke:url(#chatgpt-mermaid-_r_f3_-gradient);stroke-width:1px;}#chatgpt-mermaid-_r_f3_ [data-look="neo"].node .outer-path{filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_f3_ [data-look="neo"].node .neo-line path{stroke:rgb(31, 78, 148);filter:none;}#chatgpt-mermaid-_r_f3_ [data-look="neo"].node circle{stroke:url(#chatgpt-mermaid-_r_f3_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_f3_ [data-look="neo"].node circle .state-start{fill:#000000;}#chatgpt-mermaid-_r_f3_ [data-look="neo"].icon-shape .icon{fill:url(#chatgpt-mermaid-_r_f3_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_f3_ [data-look="neo"].icon-shape .icon-neo path{stroke:url(#chatgpt-mermaid-_r_f3_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_f3_ :root{--mermaid-font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";}«interface»Produkt+verwenden()ProduktA+verwenden()ProduktB+verwenden()«abstract»Factory+createProdukt() : ProduktFactoryA+createProdukt() : ProduktFactoryB+createProdukt() : Produkterzeugterzeugt
+``` mermaid
+classDiagram
+    class Produkt {
+        <<interface>>
+        +verwenden()
+    }
+
+    class ProduktA {
+        +verwenden()
+    }
+
+    class ProduktB {
+        +verwenden()
+    }
+
+    class Factory {
+        <<abstract>>
+        +createProdukt() Produkt
+    }
+
+    class FactoryA {
+        +createProdukt() Produkt
+    }
+
+    class FactoryB {
+        +createProdukt() Produkt
+    }
+
+    Produkt <|.. ProduktA
+    Produkt <|.. ProduktB
+    Factory <|-- FactoryA
+    Factory <|-- FactoryB
+    FactoryA ..> ProduktA : erzeugt
+    FactoryB ..> ProduktB : erzeugt
+```
 
 # 3. Adapter – Strukturmuster
 ```mermaid
