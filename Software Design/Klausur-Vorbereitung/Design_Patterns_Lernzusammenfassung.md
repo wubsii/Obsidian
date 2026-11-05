@@ -233,8 +233,8 @@ variieren.
 
   Strukturmuster (Structural)         Adapter, Decorator, Facade
 
-  Verhaltensmuster (Behavioral)       Observer, Strategy, Iterator, 
-  Command, Template Method
+  Verhaltensmuster (Behavioral)       Observer, Strategy, Iterator, Command, Template Methode
+
   -----------------------------------------------------------------------
 
 ## 5. Häufige Verwechslungen
