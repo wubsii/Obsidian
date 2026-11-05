@@ -2,7 +2,22 @@
   "release": {
     "channel": "stable"
   },
-  "sharedFolders": [],
+  "sharedFolders": [
+    {
+      "path": "Relay",
+      "guid": "34f0900b-95ec-4ab4-be7f-2168a5c1dfad",
+      "relay": "6aac1bae-0c05-429d-96a9-1be8fde99c63",
+      "sync": {
+        "canvas": true,
+        "bases": true,
+        "images": true,
+        "audio": true,
+        "videos": true,
+        "pdfs": true,
+        "otherTypes": false
+      }
+    }
+  ],
   "endpoints": {},
   "enableDocumentStatus": false,
   "enableNewLinkFormat": false,
