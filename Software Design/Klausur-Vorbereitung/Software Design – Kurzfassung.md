@@ -4,11 +4,11 @@
 
 ## Schritt 1: Die 3 Gruppen
 
-| Gruppe | Welche Frage beantwortet sie? | Patterns |
-| --- | --- | --- |
-| **Erzeugung** | Wie erzeuge ich Objekte? | Singleton, Factory |
-| **Struktur** | Wie kombiniere ich Objekte? | Decorator, Adapter, Facade |
-| **Verhalten** | Wie handeln und kommunizieren Objekte? | Strategy, Observer, Command, Template, Iterator |
+| Gruppe        | Welche Frage beantwortet sie?          | Patterns                                                                 |
+| ------------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| **Erzeugung** | Wie erzeuge ich Objekte?               | Singleton, Factory                                                       |
+| **Struktur**  | Wie kombiniere ich Objekte?            | Decorator, Adapter, Facade (AFD)                                         |
+| **Verhalten** | Wie handeln und kommunizieren Objekte? | Strategy, Observer, Command, Template, Iterator (Cat Idle On Sofa Today) |
 
 ## Schritt 2: Ein Bild pro Pattern
 
