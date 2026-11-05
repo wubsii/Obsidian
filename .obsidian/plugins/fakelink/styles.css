@@ -1,0 +1,804 @@
+:root {
+  --virtual-link-opacity: 0.6;
+  --settings-box-min-width: 200px;
+  --settings-box-min-height: 60px;
+  --virtual-link-note-color: #c0392b;
+  --virtual-link-header-color: #517ea0;
+  --virtual-link-fuzzy-note-color: #a73e6c;
+  --virtual-link-fuzzy-header-color: #6f61a6;
+  --virtual-link-highlight-bg: rgba(255, 212, 0, 0.5);
+}
+
+/* Basic virtual link styles */
+.virtual-link-span {
+  display: inline;
+  background-color: #e6e6e6;
+  position: relative;
+}
+
+.virtual-link-span,
+.virtual-link-span a,
+.virtual-link-default,
+.virtual-link-header,
+.virtual-link-span .internal-link {
+  text-decoration: none;
+  filter: brightness(var(--virtual-link-opacity));
+}
+
+/* Search-hit run inside a virtual link widget (issue #23).
+ * While Obsidian's in-editor search has a query, the link stays a widget -
+ * click, hover preview and markdown formatting keep working - so Obsidian's
+ * own search highlight never reaches the replaced text. The widget paints the
+ * hit run itself with a FAINT outline: Obsidian's accent box belongs to the
+ * current match only, and that is private state a plugin cannot read. Keeping
+ * this hint neutral leaves the accent box unambiguous wherever Obsidian can
+ * still draw it, while a hit inside a link is at least visible. */
+.virtual-link .fakelink-search-hit {
+  box-shadow: 0 0 0px 2px var(--text-faint);
+  border-radius: 2px;
+}
+
+/* While document search has a query, Obsidian selects the current match, which
+ * moves the caret inside any ** / == / ~~ wrapping and makes Live Preview
+ * reveal those markers. Hide the inline wrapping markers again so the searched
+ * run reads like normal text; structural markers (heading hashes, list
+ * bullets) are left alone so the page layout does not change. */
+.markdown-source-view.fakelink-search-active .cm-formatting-strong,
+.markdown-source-view.fakelink-search-active .cm-formatting-em,
+.markdown-source-view.fakelink-search-active .cm-formatting-highlight,
+.markdown-source-view.fakelink-search-active .cm-formatting-strikethrough,
+.markdown-source-view.fakelink-search-active .cm-formatting-code {
+  display: none;
+}
+
+/* Color-only display mode: text color instead of background shadow */
+body.virtual-link-color-only .virtual-link-span,
+body.virtual-link-color-only .virtual-link {
+  background-color: transparent;
+}
+
+/* Color-only mode: override background in italic contexts
+ * [TABLE TEST] the table-th rules here were removed for testing */
+body.virtual-link-color-only .virtual-link.cm-em,
+body.virtual-link-color-only .cm-em .virtual-link,
+body.virtual-link-color-only .virtual-link-in-italic {
+  background-color: transparent;
+}
+
+/* Separate colors for header vs note/alias links (only in color-only mode) */
+/* Note/alias links: use note color */
+body.virtual-link-color-only .virtual-link-span:not(.virtual-link-type-header),
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header) .virtual-link-a,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header) a,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header) .internal-link {
+  color: var(--virtual-link-note-color);
+  filter: none;
+  opacity: 1;
+}
+
+/* Header links: use header color */
+body.virtual-link-color-only .virtual-link-span.virtual-link-type-header,
+body.virtual-link-color-only .virtual-link-type-header .virtual-link-a,
+body.virtual-link-color-only .virtual-link-type-header a,
+body.virtual-link-color-only .virtual-link-type-header .internal-link {
+  color: var(--virtual-link-header-color);
+  filter: none;
+  opacity: 1;
+}
+
+/* Fuzzy links: base color mixed into the header / note color.
+   Each selector mirrors the rule it overrides (keeping the :not(...)) and then
+   appends the fuzzy class. That matters: declaration order alone is NOT enough,
+   because `.virtual-link:not(.virtual-link-type-header) .virtual-link-a` scores
+   (0,4,1) while a plain `.virtual-link-type-fuzzy-* .virtual-link-a` only scores
+   (0,3,1) — the note rule would win and repaint every fuzzy link red. */
+body.virtual-link-color-only .virtual-link-span:not(.virtual-link-type-header).virtual-link-type-fuzzy-header,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header).virtual-link-type-fuzzy-header .virtual-link-a,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header).virtual-link-type-fuzzy-header a,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header).virtual-link-type-fuzzy-header .internal-link {
+  color: var(--virtual-link-fuzzy-header-color);
+  filter: none;
+  opacity: 1;
+}
+
+body.virtual-link-color-only .virtual-link-span:not(.virtual-link-type-header).virtual-link-type-fuzzy-note,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header).virtual-link-type-fuzzy-note .virtual-link-a,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header).virtual-link-type-fuzzy-note a,
+body.virtual-link-color-only .virtual-link:not(.virtual-link-type-header).virtual-link-type-fuzzy-note .internal-link {
+  color: var(--virtual-link-fuzzy-note-color);
+  filter: none;
+  opacity: 1;
+}
+
+/* Color-only mode: inside a highlight, the link must not double up the native
+   highlight. Two DOM shapes occur, and they need opposite treatment:
+   (a) the widget sits INSIDE the native .cm-highlight span (plain "==text==").
+       The highlight already shows through, so the link must stay transparent -
+       otherwise the two translucent layers stack and the run looks darker.
+   (b) the widget is flagged as highlighted (FakeLink adds .cm-highlight to it)
+       but is NOT inside the native span - e.g. "==...**bold**...==", where the
+       bold run breaks the nesting. Nothing shows through there, so the link
+       must paint the highlight colour itself or it looks colourless.
+   Order matters: the (a) rule comes last so it wins whenever both match. */
+body.virtual-link-color-only .virtual-link.cm-highlight,
+body.virtual-link-color-only .virtual-link-in-highlight,
+body.virtual-link-color-only .virtual-link-span.virtual-link-in-highlight {
+  background-color: var(--highlight-background, var(--text-highlight-bg, rgba(255, 255, 0, 0.5)));
+}
+
+body.virtual-link-color-only .cm-highlight .virtual-link,
+body.virtual-link-color-only .cm-highlight .virtual-link-span,
+body.virtual-link-color-only mark .virtual-link,
+body.virtual-link-color-only mark .virtual-link-span,
+body.virtual-link-color-only .cm-highlight .virtual-link-span.virtual-link-in-highlight,
+body.virtual-link-color-only mark .virtual-link-span.virtual-link-in-highlight {
+  background-color: transparent;
+}
+
+/* Preserve strikethrough in virtual links */
+.cm-strikethrough .virtual-link-span,
+.cm-strikethrough .virtual-link-span a,
+.cm-strikethrough .virtual-link-default,
+.cm-strikethrough .virtual-link-header,
+.virtual-link-span.cm-strikethrough,
+.virtual-link-span.cm-strikethrough a,
+del .virtual-link-span,
+del .virtual-link-span a,
+s .virtual-link-span,
+s .virtual-link-span a,
+strike .virtual-link-span,
+strike .virtual-link-span a {
+  text-decoration: line-through;
+}
+
+.linker-suffix-icon {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.linker-settings-text-box {
+  min-width: var(--settings-box-min-width);
+  min-height: var(--settings-box-min-height);
+}
+
+.virtual-link-span .multiple-files-references,
+.virtual-link-span .multiple-files-indicator {
+  display: none;
+}
+
+.virtual-link-span:hover .multiple-files-references,
+.virtual-link-span.virtual-link-hover-lock .multiple-files-references {
+  display: inline;
+}
+
+/* Basic virtual link style */
+.virtual-link {
+  display: inline;
+  background-color: #e6e6e6;
+  position: relative;
+}
+
+/* Document-search fallback (issue #23, upstream Virtual Linker #88).
+ * While Obsidian's search panel is open with a query, virtual links render as
+ * plain text marks instead of replace widgets, so the search highlight
+ * (.cm-searchMatch, itself a mark on the document text) shows through instead
+ * of being swallowed by the widget. The mark carries the same classes as the
+ * widget's root span (.virtual-link, .virtual-link-span, type/context
+ * classes), so every display mode - shadow chip, color-only, alt style - stays
+ * exactly as the user chose it, with no underline added. The widget and its
+ * click behaviour return as soon as the search closes or empties.
+ * No dedicated rule is needed: the shared classes do the styling, and
+ * Obsidian's .cm-searchMatch background outranks the chip background wherever
+ * the search actually hits. */
+
+/* Virtual link in header context: inherit header text color */
+html body .cm-header .virtual-link-a,
+html body .cm-header .virtual-link,
+html body .cm-header .virtual-link-span,
+html body .cm-header .virtual-link-span a,
+html body .cm-header .virtual-link-default,
+html body .cm-header .virtual-link-header,
+html body .virtual-link-in-header,
+html body .virtual-link-in-header a {
+  color: inherit;
+  filter: none;
+  opacity: 1;
+}
+
+/* Virtual link in bold context */
+.virtual-link.cm-strong,
+.cm-strong .virtual-link {
+  font-weight: var(--bold-weight, bold);
+}
+
+/* Ensure virtual links maintain style in CodeMirror bold */
+.cm-strong .virtual-link-span {
+  font-weight: inherit;
+}
+
+/* Hover effect */
+.virtual-link:hover .multiple-files-references,
+.cm-strong .virtual-link:hover .multiple-files-references,
+.virtual-link.virtual-link-hover-lock .multiple-files-references {
+  display: inline;
+}
+
+/* Multiple files indicator */
+.virtual-link .multiple-files-references,
+.virtual-link .multiple-files-indicator {
+  display: none;
+}
+
+.virtual-link:hover .multiple-files-references {
+  display: inline;
+}
+
+/* Handle nested cases */
+.cm-strong .virtual-link .virtual-link {
+    font-weight: inherit;
+}
+
+/* Virtual links in italic context */
+.virtual-link.cm-em,
+.cm-em .virtual-link,
+.virtual-link-in-italic {
+  font-style: italic;
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+/* Virtual links in highlight context */
+.virtual-link.cm-highlight,
+.cm-highlight .virtual-link,
+.virtual-link-in-highlight,
+.virtual-link-span.virtual-link-in-highlight,
+.markdown-preview-view mark .virtual-link,
+.markdown-preview-view mark .virtual-link-span {
+  display: inline;
+  position: relative;
+  z-index: 1;
+}
+
+/* Virtual links in triple asterisk (bold-italic) context */
+.virtual-link.cm-strong.cm-em,
+.cm-strong.cm-em .virtual-link,
+.virtual-link-in-triple-star {
+    font-weight: var(--bold-weight, bold);
+    font-style: italic;
+}
+
+/* Ensure nested style inheritance */
+.cm-em .virtual-link .virtual-link {
+    font-style: inherit;
+}
+
+.cm-strong.cm-em .virtual-link .virtual-link {
+    font-weight: inherit;
+    font-style: inherit;
+}
+
+/* Restore original background implementation for virtual links */
+.virtual-link,
+.virtual-link-span {
+    background-color: rgba(128, 128, 128, 0.1);
+    position: relative;
+}
+
+/* Strikethrough style - using native text-decoration */
+.cm-strikethrough {
+    text-decoration: line-through;
+}
+
+/* Virtual links in strikethrough context */
+.cm-strikethrough .virtual-link,
+.virtual-link.cm-strikethrough,
+.cm-strikethrough .virtual-link-span,
+.virtual-link-span.cm-strikethrough,
+.virtual-link-in-strikethrough {
+    text-decoration: line-through;
+}
+
+/* "What is new" dialog shown once after an update */
+.fakelink-whats-new ul.fakelink-whats-new-list {
+    padding-left: 1.2em;
+    margin: 0.4em 0 1em;
+}
+
+.fakelink-whats-new ul.fakelink-whats-new-list li {
+    margin-bottom: 0.55em;
+    line-height: 1.5;
+}
+
+/* Virtual links in tables */
+table th .virtual-link,
+table th .virtual-link-span {
+    font-weight: var(--bold-weight, bold);
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+table th .virtual-link-span,
+table th .virtual-link-span a,
+table th .virtual-link-default,
+table th .virtual-link-header,
+table th .virtual-link-span .internal-link {
+    font-weight: var(--bold-weight, bold);
+    filter: brightness(var(--virtual-link-opacity));
+}
+
+/* Virtual link click area optimization - centered transparent click layer solution */
+.virtual-link-a {
+    position: relative;
+    display: inline-block;
+}
+.virtual-link-a::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.5em;
+    height: 1.5em;
+    z-index: 0;
+}
+
+/* ============================================================
+ * Alternative Display Style
+ * Enabled via "Alternative display style" toggle in settings
+ * - Strikethrough → underline
+ * - %%comments%% → collapsed to dot, expand on active line
+ * ============================================================ */
+
+/* Standard prominent underline */
+.virtual-linker-alt-style u {
+  text-decoration: underline;
+}
+
+/* Basic virtual link style: no text decoration by default, excluding strikethrough context */
+body.virtual-linker-alt-style .virtual-link:not(.cm-strikethrough):not(.virtual-link-in-strikethrough),
+body.virtual-linker-alt-style .virtual-link-span:not(.cm-strikethrough):not(.virtual-link-in-strikethrough),
+body.virtual-linker-alt-style .virtual-link-a:not(.cm-strikethrough):not(.virtual-link-in-strikethrough) {
+  text-decoration: none;
+}
+
+/* Force override CodeMirror strikethrough default style */
+body.virtual-linker-alt-style .cm-strikethrough {
+  text-decoration: underline;
+}
+
+/* Change reading mode strikethrough to underline */
+body.virtual-linker-alt-style .markdown-preview-view del,
+body.virtual-linker-alt-style .markdown-rendered del,
+body.virtual-linker-alt-style .markdown-preview-view s,
+body.virtual-linker-alt-style .markdown-rendered s,
+body.virtual-linker-alt-style .markdown-preview-view strike,
+body.virtual-linker-alt-style .markdown-rendered strike {
+  text-decoration: underline;
+}
+
+/* Virtual links in strikethrough context: show as underline */
+body.virtual-linker-alt-style .cm-strikethrough .virtual-link,
+body.virtual-linker-alt-style .cm-strikethrough .virtual-link-span,
+body.virtual-linker-alt-style .virtual-link.cm-strikethrough,
+body.virtual-linker-alt-style .virtual-link-span.cm-strikethrough,
+body.virtual-linker-alt-style .virtual-link-in-strikethrough,
+body.virtual-linker-alt-style .virtual-link-in-strikethrough .virtual-link-a,
+body.virtual-linker-alt-style .cm-strikethrough .virtual-link-a,
+body.virtual-linker-alt-style .virtual-link-a.cm-strikethrough,
+/* Reading mode */
+body.virtual-linker-alt-style .markdown-preview-view del .virtual-link,
+body.virtual-linker-alt-style .markdown-preview-view del .virtual-link-span,
+body.virtual-linker-alt-style .markdown-preview-view del .virtual-link-a,
+body.virtual-linker-alt-style .markdown-preview-view s .virtual-link,
+body.virtual-linker-alt-style .markdown-preview-view s .virtual-link-span,
+body.virtual-linker-alt-style .markdown-preview-view s .virtual-link-a,
+body.virtual-linker-alt-style .markdown-preview-view strike .virtual-link,
+body.virtual-linker-alt-style .markdown-preview-view strike .virtual-link-span,
+body.virtual-linker-alt-style .markdown-preview-view strike .virtual-link-a,
+body.virtual-linker-alt-style .markdown-rendered del .virtual-link,
+body.virtual-linker-alt-style .markdown-rendered del .virtual-link-span,
+body.virtual-linker-alt-style .markdown-rendered del .virtual-link-a,
+body.virtual-linker-alt-style .markdown-rendered s .virtual-link,
+body.virtual-linker-alt-style .markdown-rendered s .virtual-link-span,
+body.virtual-linker-alt-style .markdown-rendered s .virtual-link-a,
+body.virtual-linker-alt-style .markdown-rendered strike .virtual-link,
+body.virtual-linker-alt-style .markdown-rendered strike .virtual-link-span,
+body.virtual-linker-alt-style .markdown-rendered strike .virtual-link-a {
+  text-decoration: underline;
+}
+
+/* Special override: ensure virtual link a elements in strikethrough context show underline */
+body.virtual-linker-alt-style .cm-strikethrough .virtual-link-span a.virtual-link-a,
+body.virtual-linker-alt-style .virtual-link-span.cm-strikethrough a.virtual-link-a,
+body.virtual-linker-alt-style .virtual-link-in-strikethrough a.virtual-link-a,
+body.virtual-linker-alt-style del .virtual-link-span a.virtual-link-a,
+body.virtual-linker-alt-style s .virtual-link-span a.virtual-link-a,
+body.virtual-linker-alt-style strike .virtual-link-span a.virtual-link-a {
+  text-decoration: underline;
+}
+
+/* Disable plugin-drawn strikethrough pseudo-elements */
+body.virtual-linker-alt-style .cm-strikethrough .virtual-link::after,
+body.virtual-linker-alt-style .cm-strikethrough .virtual-link-span::after,
+body.virtual-linker-alt-style .virtual-link.cm-strikethrough::after,
+body.virtual-linker-alt-style .virtual-link-span.cm-strikethrough::after,
+body.virtual-linker-alt-style .virtual-link-in-strikethrough::after,
+body.virtual-linker-alt-style .markdown-preview-view .cm-strikethrough .virtual-link::after,
+body.virtual-linker-alt-style .markdown-preview-view .virtual-link.cm-strikethrough::after,
+body.virtual-linker-alt-style .markdown-preview-view .cm-strikethrough .virtual-link-span::after,
+body.virtual-linker-alt-style .markdown-preview-view .virtual-link-span.cm-strikethrough::after,
+body.virtual-linker-alt-style .markdown-preview-view del .virtual-link::after,
+body.virtual-linker-alt-style .markdown-preview-view del .virtual-link-span::after,
+body.virtual-linker-alt-style .markdown-preview-view s .virtual-link::after,
+body.virtual-linker-alt-style .markdown-preview-view s .virtual-link-span::after,
+body.virtual-linker-alt-style .markdown-preview-view strike .virtual-link::after,
+body.virtual-linker-alt-style .markdown-preview-view strike .virtual-link-span::after {
+  display: none;
+  content: none;
+}
+
+/* 
+ * In live preview mode, collapse %%comments%% into small dots, expand on active line
+ */
+
+/* 1. Default: hide all text inside comments (including %% markers) */
+.virtual-linker-alt-style .cm-line .cm-comment {
+  font-size: 0;
+  color: transparent;
+  transition: font-size 0.15s ease;
+}
+
+/* 2. Use pseudo-element to display a dot marker at the first non-formatting comment text position */
+.virtual-linker-alt-style .cm-line .cm-comment:not(.cm-formatting)::before {
+  --text-faint: #409eff;
+  content: "•";
+  font-size: 0.9rem;
+  color: var(--text-faint);
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* 2b. Subsequent non-formatting comment text no longer shows dot */
+.virtual-linker-alt-style .cm-line .cm-comment:not(.cm-formatting) ~ .cm-comment:not(.cm-formatting)::before {
+  content: none;
+  display: none;
+}
+
+/* 3. Also completely hide %% markers themselves (no space) */
+.virtual-linker-alt-style .cm-line .cm-formatting-comment {
+  display: none;
+}
+
+/* 4. Hide virtual links inside comment blocks (non-active lines only) */
+/* Uses .virtual-link-in-comment class added by TypeScript */
+/* Note: only .cm-line has .cm-active, not .cm-content */
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .virtual-link-in-comment,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .virtual-link-in-comment .virtual-link-a,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .cm-comment .virtual-link,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .cm-comment .virtual-link-span,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .cm-comment .virtual-link-a {
+  font-size: 0;
+  color: transparent;
+}
+
+/* 4b. Hide pseudo-elements of virtual links inside comment blocks */
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .virtual-link-in-comment::after,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .virtual-link-in-comment .virtual-link-a::after,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .cm-comment .virtual-link::after,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .cm-comment .virtual-link-span::after,
+body.virtual-linker-alt-style .cm-line:not(.cm-active) .cm-comment .virtual-link-a::after {
+  display: none;
+  content: none;
+}
+
+/* 5. When on active line: restore comment text and hide dot */
+.virtual-linker-alt-style .cm-line.cm-active .cm-comment {
+  font-size: inherit;
+  color: #409eff;
+}
+.virtual-linker-alt-style .cm-line.cm-active .cm-comment:not(.cm-formatting)::before {
+  display: none;
+}
+
+/* 5b. When on active line: restore visibility of virtual links inside comment blocks */
+body.virtual-linker-alt-style .cm-line.cm-active .virtual-link-in-comment,
+body.virtual-linker-alt-style .cm-line.cm-active .virtual-link-in-comment .virtual-link-a,
+body.virtual-linker-alt-style .cm-line.cm-active .cm-comment .virtual-link,
+body.virtual-linker-alt-style .cm-line.cm-active .cm-comment .virtual-link-span,
+body.virtual-linker-alt-style .cm-line.cm-active .cm-comment .virtual-link-a {
+  font-size: inherit;
+  color: #409eff;
+  filter: none;
+  opacity: 1;
+}
+/* In color-only mode, virtual links inside comments show the custom link color */
+body.virtual-link-color-only.virtual-linker-alt-style .cm-line.cm-active .virtual-link-in-comment,
+body.virtual-link-color-only.virtual-linker-alt-style .cm-line.cm-active .virtual-link-in-comment .virtual-link-a,
+body.virtual-link-color-only.virtual-linker-alt-style .cm-line.cm-active .cm-comment .virtual-link,
+body.virtual-link-color-only.virtual-linker-alt-style .cm-line.cm-active .cm-comment .virtual-link-span,
+body.virtual-link-color-only.virtual-linker-alt-style .cm-line.cm-active .cm-comment .virtual-link-a {
+  color: var(--virtual-link-color);
+  opacity: 1;
+}
+
+/* 6. (Optional) If you want expand on hover, replace the active-line version above with these */
+/*
+.virtual-linker-alt-style .cm-line:hover .cm-comment {
+  font-size: inherit;
+  color: #409eff;
+}
+.virtual-linker-alt-style .cm-line:hover .cm-comment:not(.cm-formatting)::before {
+  display: none;
+}
+*/
+
+/* ============================================================
+ * Optional background highlight
+ * (setting: Appearance -> Background, off by default)
+ *
+ * Everything is scoped to body.virtual-link-bg, so none of it applies unless
+ * the master setting is on. Each part of the look then needs its own class as
+ * well, which is how the four settings split it up (all optional):
+ *   virtual-link-bg-tint    overall tint
+ *   virtual-link-bg-lines   list / indent / table / callout backgrounds
+ *   virtual-link-bg-cursor  cursor line + caret
+ *   virtual-link-bg-tab-accent      active tab header styling
+ *   virtual-link-bg-unfocused-mask  mask while the window is unfocused
+ * Colours are variables - override them in a snippet to taste:
+ *   --fakelink-bg       overall tint        (default #f0f8ff, aliceblue)
+ *   --fakelink-line-bg  lists / indent lines (default skyblue at 10%)
+ * ============================================================ */
+
+body.virtual-link-bg {
+  --fakelink-bg: #f0f8ff;
+  --fakelink-line-alpha: 0.10;
+  --fakelink-cursor-line-alpha: 0.35;
+  --fakelink-line-bg: rgba(135, 206, 235, var(--fakelink-line-alpha));
+  --fakelink-cursor-line-bg: rgba(255, 220, 180, var(--fakelink-cursor-line-alpha));
+  --fakelink-caret: #8B4513;
+  /* Cursor-line gutter chip. Same neutral language as the text band: a
+   * translucent black over whatever surface is behind it, so it reads as a
+   * slightly darker version of the background instead of a coloured block. */
+  --fakelink-gutter-active-bg: rgba(0, 0, 0, 0.16);
+  --fakelink-tab-accent: #1a73e8;
+  /* Both tab styles are available: this gradient comes from 激活页面明显化.css,
+   * the flat #f8fbff from 背景.css - set the variable to whichever you prefer. */
+  --fakelink-tab-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --fakelink-tab-shadow: rgba(92, 107, 192, 0.2);
+  --fakelink-tab-pane: rgba(26, 115, 232, 0.32);
+  /* Unfocused window: was rgba(0, 0, 0, 0.7) - much lighter now. */
+  --fakelink-unfocused-mask: rgba(0, 0, 0, 0.25);
+  /* Surface of an inactive pane's tab strip (replaces an opacity fade). */
+  --fakelink-tab-dim: rgba(0, 0, 0, 0.05);
+}
+
+/* Part switch "Overall tint": the --background-* aliases are only redirected
+ * when that part is on, so the theme keeps its own surfaces otherwise. The
+ * other parts (lines, cursor line, tabs) do not depend on this block. */
+body.virtual-link-bg.virtual-link-bg-tint {
+  /* Let theme components that read these follow the tint as well. */
+  --background-primary: var(--fakelink-bg);
+  --background-primary-alt: var(--fakelink-bg);
+  --background-secondary: var(--fakelink-bg);
+  --background-secondary-alt: var(--fakelink-bg);
+}
+
+/* Dark themes: the light defaults above would turn the whole app white, so a
+ * dark set is used instead. The --background-* aliases follow automatically,
+ * because they reference --fakelink-bg. */
+body.theme-dark.virtual-link-bg {
+  --fakelink-bg: #1b1f24;
+  --fakelink-line-bg: rgba(120, 170, 255, var(--fakelink-line-alpha));
+  --fakelink-cursor-line-bg: rgba(255, 190, 120, var(--fakelink-cursor-line-alpha));
+  --fakelink-caret: #ffb27a;
+  /* Dark surfaces: a translucent white lifts the chip out of the background. */
+  --fakelink-gutter-active-bg: rgba(255, 255, 255, 0.18);
+  --fakelink-tab-accent: #7aa2f7;
+  --fakelink-tab-bg: linear-gradient(135deg, #23272e 0%, #1c2026 100%);
+  --fakelink-tab-shadow: rgba(0, 0, 0, 0.35);
+  --fakelink-tab-pane: rgba(90, 140, 255, 0.22);
+  /* Over a dark background a light-grey mask disappears, so a darker one. */
+  --fakelink-unfocused-mask: rgba(0, 0, 0, 0.45);
+  /* Over a dark surface a light dim would read as raised, not recessed. */
+  --fakelink-tab-dim: rgba(0, 0, 0, 0.18);
+}
+
+/* Very faint overall background. The --background-* aliases set above carry
+ * this for most themes; the explicit rules are the belt-and-braces version for
+ * themes that ignore those variables. */
+body.virtual-link-bg.virtual-link-bg-tint,
+body.virtual-link-bg.virtual-link-bg-tint .app-container,
+body.virtual-link-bg.virtual-link-bg-tint .workspace,
+body.virtual-link-bg.virtual-link-bg-tint .workspace-leaf-content,
+body.virtual-link-bg.virtual-link-bg-tint .markdown-source-view,
+body.virtual-link-bg.virtual-link-bg-tint .markdown-preview-view,
+body.virtual-link-bg.virtual-link-bg-tint .markdown-reading-view,
+body.virtual-link-bg.virtual-link-bg-tint .cm-editor,
+body.virtual-link-bg.virtual-link-bg-tint .cm-scroller {
+  background-color: var(--fakelink-bg);
+}
+
+/* List lines (live preview + reading view) */
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-line.HyperMD-list-line,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-preview-view li,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-reading-view li {
+  background-color: var(--fakelink-line-bg);
+}
+
+/* Indented lines themselves (class added by the plugin: a leading Tab or two
+ * or more spaces - neither is visible to CSS, Obsidian gives those lines no
+ * indentation class at all) */
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-line.fakelink-indent-line {
+  background-color: var(--fakelink-line-bg);
+}
+
+/* The line above an indented one. Also marked by the plugin: "the line above"
+ * is a previous sibling, which CSS cannot reach at all without the
+ * sibling-matching pseudo-class - deliberately avoided, because it invalidates
+ * styles broadly on every edit. */
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-line.fakelink-indent-above {
+  background-color: var(--fakelink-line-bg);
+}
+
+/* Cursor line + caret (from 背景.css)
+ * Two independent signals, both driven by --fakelink-cursor-line-color (the
+ * "Cursor line colour" setting, empty = caret colour) and scaled by the
+ * "Cursor line strength" slider:
+ *  - the gutter (line number) always gets a colour chip, outside the text;
+ *  - the text area gets an optional pseudo-3D band (top highlight, bottom
+ *    shade, faint gradient), enabled by the "Pseudo-3D band" toggle. It is
+ *    kept soft and animated over 120ms, so moving the caret fades instead of
+ *    flashing; the toggle exists because, for some eyes, any band following
+ *    the caret still tires. */
+body.virtual-link-bg.virtual-link-bg-cursor .markdown-source-view.mod-cm6 .cm-gutters .cm-gutterElement.cm-activeLineGutter,
+body.virtual-link-bg.virtual-link-bg-cursor .markdown-source-view.mod-cm6 .cm-activeLineGutter {
+  background-color: color-mix(in srgb, var(--fakelink-cursor-line-color) calc(var(--fakelink-cursor-line-alpha) * 100%), transparent);
+  /* Obsidian sets `.cm-gutters { color: var(--text-faint) !important }`, which
+   * beats any `color` we could declare without !important. -webkit-text-fill-
+   * color paints the glyphs directly and is not subject to that, so it wins
+   * without an !important of our own. */
+  -webkit-text-fill-color: var(--text-normal);
+  border-radius: 3px;
+}
+
+body.virtual-link-bg.virtual-link-bg-cursor.virtual-link-bg-cursor-3d .markdown-source-view.mod-cm6 .cm-content .cm-line.cm-active {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--fakelink-cursor-line-color) calc(var(--fakelink-cursor-line-alpha) * 18%), transparent) 0%,
+    transparent 100%
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--fakelink-cursor-line-color) calc(var(--fakelink-cursor-line-alpha) * 75%), transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--fakelink-cursor-line-color) calc(var(--fakelink-cursor-line-alpha) * 45%), transparent);
+  border-radius: 4px;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+
+body.virtual-link-bg.virtual-link-bg-cursor .markdown-source-view.mod-cm6 .cm-content {
+  caret-color: var(--fakelink-caret);
+}
+
+body.virtual-link-bg.virtual-link-bg-cursor .markdown-source-view.mod-cm6 .cm-cursorLayer .cm-cursor {
+  border-left: 1px solid var(--fakelink-caret);
+}
+
+/* Table rows, live preview widget and source mode (from 背景.css).
+ * Colour only: the alignment tweaks in that snippet (display/width/margins)
+ * fought Obsidian's own table widget, so they are intentionally not ported. */
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-content .cm-table-widget,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-content .cm-line.HyperMD-table-row,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-content .HyperMD-table-row.cm-active,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-content .cm-table-widget .cm-line {
+  background-color: var(--fakelink-line-bg);
+}
+
+/* Reading view: the same tint on tables (cells are normally transparent, so
+ * colouring the table element is enough) */
+body.virtual-link-bg.virtual-link-bg-lines .markdown-rendered table,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-preview-view table,
+body.virtual-link-bg.virtual-link-bg-lines .markdown-reading-view table {
+  background-color: var(--fakelink-line-bg);
+}
+
+/* Callouts (from 背景.css) - editor and reading view.
+ * Every callout type gets the tint, not just "note": they all carry the
+ * [data-callout] attribute, and colouring only one type looked like a bug. */
+body.virtual-link-bg.virtual-link-bg-lines .markdown-source-view.mod-cm6 .cm-content [data-callout],
+body.virtual-link-bg.virtual-link-bg-lines .markdown-rendered [data-callout],
+body.virtual-link-bg.virtual-link-bg-lines .markdown-preview-view [data-callout],
+body.virtual-link-bg.virtual-link-bg-lines .markdown-reading-view [data-callout] {
+  background-color: var(--fakelink-line-bg);
+}
+
+/* Tab headers - merged from 背景.css and 激活页面明显化.css.
+ * Part switch "Tab accent" (virtual-link-bg-tab-accent). */
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs.mod-active .workspace-tab-header-container {
+  background-color: var(--fakelink-tab-pane);
+  transition: background-color 0.2s ease;
+}
+
+/* Inactive pane: set apart by its own surface instead of by fading the whole
+ * container. An opacity here used to stack with the per-tab one further down
+ * (0.85 x 0.9 = 0.77), which left every label in inactive panes washed out. */
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs:not(.mod-active) .workspace-tab-header-container {
+  background-color: var(--fakelink-tab-dim);
+}
+
+/* Only the FOCUSED pane's active tab gets the full accent. Every pane has its
+ * own .is-active tab, so without the .mod-active guard a split view showed two
+ * (or more) "active" tabs at once. */
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs.mod-active .workspace-tab-header-container .workspace-tab-header.is-active {
+  background: var(--fakelink-tab-bg);
+  color: var(--fakelink-tab-accent);
+  font-weight: 600;
+  /* Two accent bars (top and bottom) mark the active tab. They are inset
+   * shadows rather than borders: a real border is part of the box, so every tab
+   * switch made it appear/disappear and nudged the content by its width. An
+   * inset shadow paints inside the box and costs no layout. The bars let the
+   * active tab stand out on its own, so the inactive ones never have to be
+   * dimmed — dimming them made their labels hard to read. */
+  box-shadow:
+    inset 0 3px 0 var(--fakelink-tab-accent),
+    inset 0 -3px 0 var(--fakelink-tab-accent),
+    0 2px 8px var(--fakelink-tab-shadow);
+  border-radius: 6px 6px 0 0;
+  /* Deliberately not `transition: all`: that animates every property Obsidian
+   * touches on these elements too, including ones it changes for reasons of
+   * its own, and each extra property is work on every tab switch. */
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2;
+}
+
+/* Keep the tab's icon in step with its label */
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs.mod-active .workspace-tab-header-container .workspace-tab-header.is-active svg {
+  color: var(--fakelink-tab-accent);
+}
+
+/* The label itself. It lives in child elements (.workspace-tab-header-inner /
+ * .workspace-tab-header-inner-title), and a theme that colours those directly
+ * beats the colour set on the header above — inheritance always loses to a rule
+ * of its own. That is why the active label changed colour only sometimes: it
+ * followed the header when nothing else styled it, and kept the theme's colour
+ * when something did. Paint the label too. */
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs.mod-active .workspace-tab-header-container .workspace-tab-header.is-active .workspace-tab-header-inner,
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs.mod-active .workspace-tab-header-container .workspace-tab-header.is-active .workspace-tab-header-inner-title {
+  color: var(--fakelink-tab-accent);
+  font-weight: 600;
+}
+
+/* Inactive tabs keep full opacity. The active one is marked by its own accent
+ * bars, colour and background, so the others never need dimming to make it
+ * stand out — a dim (0.72 was tried, then 0.9) only made their labels harder
+ * to read. */
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tab-header:not(.is-active) {
+  opacity: 1;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tab-header:not(.is-active):hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* These transitions are decoration only - skip them when the system asks for
+ * reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tabs.mod-active .workspace-tab-header-container,
+  body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tab-header-container .workspace-tab-header.is-active,
+  body.virtual-link-bg.virtual-link-bg-tab-accent .workspace-tab-header:not(.is-active) {
+    transition: none;
+  }
+}
+
+/* While the window is unfocused the workspace dims a little.
+ * Part switch "Unfocused mask" (virtual-link-bg-unfocused-mask).
+ * 激活页面明显化.css used rgba(0, 0, 0, 0.7) here - far too dark. */
+body.virtual-link-bg.virtual-link-bg-unfocused-mask:not(.is-focused) .workspace::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--fakelink-unfocused-mask);
+  z-index: 9999;
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
