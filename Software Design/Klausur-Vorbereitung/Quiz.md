@@ -346,7 +346,7 @@ In der Nokia-Angabe ist `getProduct` in `NokiaFactory` konkret, `createProduct` 
 
 [ ] Es wird eine `BaseStation4G` zurückgegeben
 
-[c] Es wird `null` zurückgegeben
+[r] Es wird `null` zurückgegeben
 
 [ ] Es wird eine `Boots`-Instanz zurückgegeben
 
