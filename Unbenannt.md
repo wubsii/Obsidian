@@ -16,3 +16,5 @@ Verhaltensmuster regeln, wie Objekte miteinander arbeiten und kommunizieren. Die
 	•	Command (Aktion als Objekt)
 	•	Template Method (fester Ablauf, einzelne Schritte variieren)
 	•	Iterator (Elemente durchgehen)
+
+Merkhilfe: Erzeugung ist das Machen, Struktur ist das Zusammenbauen, Verhalten ist das Zusammenarbeiten.
