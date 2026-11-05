@@ -188,7 +188,32 @@ classDiagram
 
 # 8. Command – Verhaltensmuster
 
-``
+```mermaid
+classDiagram
+    class Kommando {
+        <<interface>>
+        +execute()
+    }
+
+    class LichtEinschalten {
+        -licht Licht
+        +execute()
+    }
+
+    class Licht {
+        +einschalten()
+        +ausschalten()
+    }
+
+    class Fernbedienung {
+        -kommando Kommando
+        +tasteDruecken()
+    }
+
+    Kommando <|.. LichtEinschalten
+    LichtEinschalten --> Licht : Receiver
+    Fernbedienung --> Kommando : Invoker
+```
 
 # 9. Template Method – Verhaltensmuster
 
