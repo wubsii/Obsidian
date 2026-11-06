@@ -1,4 +1,4 @@
-Ah, stimmt! 😊 Du musst nur diese 10 Design Patterns lernen. Hier sind sie jeweils als eigenes Mermaid-UML-Diagramm für Obsidian.
+Du musst nur diese 10 Design Patterns lernen. Hier sind sie jeweils als eigenes Mermaid-UML-Diagramm für Obsidian.
 
 # 1. Singleton – Erzeugungsmuster
 
