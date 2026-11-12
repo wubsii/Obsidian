@@ -1,4 +1,3 @@
-
 ## Modulübersicht
 
 In diesem Modul geht es darum, wie Benutzeroberflächen mit WPF aufgebaut und gestaltet werden.
