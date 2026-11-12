@@ -5,5 +5,6 @@ JavaScript Object Notation
 - Datenaustausch
 
 Beispiel:
-	abrufen von daten über eine API
-		
+	- abrufen von daten über eine API
+	- z.B. Nutzerprofie oder Produktdetails
+
