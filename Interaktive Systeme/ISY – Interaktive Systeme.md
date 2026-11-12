@@ -1,48 +1,4 @@
-# ISY – Interaktive Systeme
-
 ## Programmiersprachen – Einführung
-
-**Vortragender:** Johann Grabner
-
----
-
-# 1. Überblick über den Vortragenden
-
-Die Präsentation enthält Informationen zu den beruflichen Qualifikationen und Erfahrungen des Vortragenden.
-
-## Zertifizierungen und Auszeichnungen
-
-- Microsoft Certified Trainer
-    
-- Certified Java Programmer
-    
-- Oracle Certified Professional
-    
-- MCPD
-    
-- MCTS
-    
-- MCDBA
-    
-- MCSE
-    
-- Microsoft Most Valuable Professional (MVP)
-    
-
-## Berufspraxis
-
-- Diverse Consulting- und Trainertätigkeiten
-    
-- Buchautor – Windows Communication Foundation
-    
-- Software Design und Entwicklung
-    
-- Projektleitung
-    
-- Selbstständige Tätigkeit im Microsoft-Umfeld
-    
-
----
 
 # 2. Überblick – Programmiersprachen und Technologien
 
