@@ -1,3 +1,9 @@
 JavaScript Object Notation
 
-- leichtgewichtigtes D
+- leichtgewichtigtes Datenformat
+- syntax von javaScript
+- Datenaustausch
+
+Beispiel:
+	abrufen von daten über eine API
+		
