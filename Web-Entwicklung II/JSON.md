@@ -1,1 +1,3 @@
-neues Kapitel 
+JavaScript Object Notation
+
+- leichtgewichtigtes D
