@@ -433,3 +433,8 @@ Beispiel:
 - **Convert():** Quelle → Ziel.
     
 - **ConvertBack():** Ziel → Quelle.
+
+
+```c#
+public delegate void MethodenName();
+```
