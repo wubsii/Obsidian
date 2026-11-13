@@ -438,3 +438,5 @@ Beispiel:
 ```c#
 public delegate void MethodenName();
 ```
+
+Methoden in Variablen:
