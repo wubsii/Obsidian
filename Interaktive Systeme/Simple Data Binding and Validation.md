@@ -435,9 +435,11 @@ Beispiel:
 - **ConvertBack():** Ziel → Quelle.
 
 
-```c#
+```
 public delegate void MethodenName();
 ```
 
 Methoden in Variablen:
 übergeben, wie etwas passiert, kann man einer Methode übergeben, wenn man eine Variable (delegate) erstellt.
+
+callbackmethode:
